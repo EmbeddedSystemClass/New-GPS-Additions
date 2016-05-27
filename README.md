@@ -40,3 +40,6 @@ called from within stabilizer.c.  A few detail comments on each of these code se
 withing the individual firmware source code. 
 
 Collaboration with Bitcraze is solicited in order to to advance forward and to 
+objective.  Any preliminary feedback, comments and suggestions on this proposed software effort would
+be greatly appreciated.  In addition, if more background or clarification information is of interest,
+please let this be known.
