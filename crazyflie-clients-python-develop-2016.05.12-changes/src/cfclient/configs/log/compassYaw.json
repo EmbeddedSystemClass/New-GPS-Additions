@@ -1,0 +1,16 @@
+{
+  "logconfig": {
+    "logblock": {
+      "period": 1000,
+      "variables": [
+        {
+          "stored_as": "",
+          "fetch_as": "float",
+          "type": "TOC",
+          "name": "compass.yawgeo"
+        }
+      ],
+      "name": "c_yawgeo"
+    }
+  }
+}

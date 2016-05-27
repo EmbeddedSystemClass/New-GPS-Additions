@@ -1,0 +1,22 @@
+{
+  "logconfig": {
+    "logblock": {
+      "period": 1000,
+      "name": "c_monitor",
+      "variables": [
+        {
+          "fetch_as": "uint8_t",
+          "stored_as": "",
+          "name": "compassCal.calRequired",
+          "type": "TOC"
+        },
+        {
+          "fetch_as": "uint8_t",
+          "stored_as": "",
+          "name": "compassCal.magcalOn",
+          "type": "TOC"
+        }
+      ]
+    }
+  }
+}

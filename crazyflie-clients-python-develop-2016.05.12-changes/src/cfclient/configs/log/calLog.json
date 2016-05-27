@@ -1,0 +1,58 @@
+{
+  "logconfig": {
+    "logblock": {
+      "period": 1000,
+      "variables": [
+        {
+          "fetch_as": "uint8_t",
+          "name": "compassCal.calRequired",
+          "type": "TOC",
+          "stored_as": ""
+        },
+        {
+          "fetch_as": "uint8_t",
+          "name": "compassCal.magcalOn",
+          "type": "TOC",
+          "stored_as": ""
+        },
+        {
+          "fetch_as": "int16_t",
+          "name": "compassCal.xmax",
+          "type": "TOC",
+          "stored_as": ""
+        },
+        {
+          "fetch_as": "int16_t",
+          "name": "compassCal.xmin",
+          "type": "TOC",
+          "stored_as": ""
+        },
+        {
+          "fetch_as": "int16_t",
+          "name": "compassCal.ymax",
+          "type": "TOC",
+          "stored_as": ""
+        },
+        {
+          "fetch_as": "int16_t",
+          "name": "compassCal.ymin",
+          "type": "TOC",
+          "stored_as": ""
+        },
+        {
+          "fetch_as": "int16_t",
+          "name": "compassCal.zmax",
+          "type": "TOC",
+          "stored_as": ""
+        },
+        {
+          "fetch_as": "int16_t",
+          "name": "compassCal.zmin",
+          "type": "TOC",
+          "stored_as": ""
+        }
+      ],
+      "name": "calLogGroup"
+    }
+  }
+}
