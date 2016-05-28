@@ -113,6 +113,8 @@ class GpsTab(Tab, gps_tab_class):
             self._connected_signal.emit)
 
         self._max_speed = 0.0
+        self._gpslat = 0.0
+        self._gpslong = 0.0
 
         self._fix_types = {
             0: "No fix",
@@ -124,9 +126,6 @@ class GpsTab(Tab, gps_tab_class):
             6: "2D/DGPS-fix",
             7: "3D/DGPS-fix" 
         }        
-       
-#        self._lat = 0
-#        self._long = 0
 
     def onLoadFinished(self):
         with open(cfclient.module_path + "/resources/map.js", 'r') as f:
@@ -198,20 +197,19 @@ class GpsTab(Tab, gps_tab_class):
         long = float(data["gps.lon"]) / 10000000.0
         lat = float(data["gps.lat"]) / 10000000.0
 
-#        if self._lat != lat or self._long != long:
-        self._long.setText("{:.6f}".format(long))
-        self._lat.setText("{:.6f}".format(lat))
-        self._nbr_locked_sats.setText(str(data["gps.nsat"]))
-        self._height.setText("{:.2f}".format(float(data["gps.hMSL"])))
-        self._fix_type.setText(self._fix_types[data["gps.fixType"]])
-        self._accuracy.setText("{:.1f}".format(float(data["gps.hAcc"])))
+        if self._gpslat != lat or self._gpslong != long:              
+            self._long.setText("{:.6f}".format(long))
+            self._lat.setText("{:.6f}".format(lat))
+            self._nbr_locked_sats.setText(str(data["gps.nsat"]))  
+            self._height.setText("{:.2f}".format(float(data["gps.hMSL"])))
+            self._fix_type.setText(self._fix_types[data["gps.fixType"]])
+            self._accuracy.setText("{:.1f}".format(float(data["gps.hAcc"])))
 #            if speed > self._max_speed:
 #                self._max_speed = speed
 #            self._speed_max.setText(str(self._max_speed))
 #            self._heading.setText("{:.1f}".format(float(data["gps.heading"])))
 #            self._speed.setText("{:.1f}".format(float(data["gps.gSpeed"]))) 
-
-        self._place_cf(long, lat, 1)
-#            self._lat = lat
-#            self._long = long
+            self._gpslat = lat
+            self._gpslong = long
+            self._place_cf(long, lat, 1)
 #            self.panMap(long, lat)

@@ -296,6 +296,7 @@ void compassController(state_t *state, const sensorData_t *sensorData, const uin
     yawangle = atan2f(ym,xm) / D2R  + magneticdeclination;
     AdjAngle(&yawangle);                 //+ angle cw    
     state->attitude.yawgeo = -yawangle;  //+ angle ccw
+    if (!state->position.timestamp) state->attitude.yawgeo = state->attitude.yaw;  
 //  In converting position (desired-measured) to roll/pitch
 //  D2R = (float) M_PI/180.0f
 //  cos = cosf(yawgeo * D2R)

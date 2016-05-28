@@ -26,7 +26,7 @@
 #ifndef __STABILIZER_TYPES_H__
 #define __STABILIZER_TYPES_H__
 
-#define GPS_Present
+//#define GPS_Present
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -110,7 +110,8 @@ typedef struct control_s {
 typedef enum mode_e {
   modeDisable = 0,
   modeAbs,
-  modeVelocity
+  modeVelocity,
+  modeAbsVel
 } mode_t;
 
 typedef struct setpoint_s {
