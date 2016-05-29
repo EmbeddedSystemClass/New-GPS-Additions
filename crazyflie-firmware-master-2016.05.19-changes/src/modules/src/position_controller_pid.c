@@ -133,7 +133,7 @@ void positionController(float* thrust, attitude_t *attitude, const state_t *stat
   float y = runPid(state->position.y, &this.pidY, setpoint->mode.y, setpoint->position.y, setpoint->velocity.y, DT);
 
 #ifdef GPS_present
-  if (!state->position.timestamp) state->attitude.yawgeo = state->attitude.yaw;
+//  if (!state->position.timestamp) state->attitude.yawgeo = state->attitude.yaw;
   float yawRad = state->attitude.yawgeo * (float)M_PI / 180;
 #else
   float yawRad = state->attitude.yaw * (float)M_PI / 180;

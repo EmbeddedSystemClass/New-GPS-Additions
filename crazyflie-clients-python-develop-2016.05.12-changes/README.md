@@ -1,5 +1,29 @@
 # Crazyflie 1.0/2.0 Firmware
 
+Date: 2016.05.29
+
+This is an update to summarize the respository branches to-date:
+    
+>>>>Branch gtgpsTab - The 1st commit contains the GlobalTop Titan-2 GNSS deck driver and
+magnetometer (compass) controller that provides state->attitude/yawgeo = +/- 180 degrees
+positive is counterclockwise.  The #define GPS_Present is active in stabilizer_types.h.  Also,
+the altitude hold mode code is untouched and is the original thrust-based method for setting
+the desired altitude.  This commit contains the original pid.h values.
+
+>>>>Branch gtgps-2 - This 2nd commit contains the new altitude hold mode code which
+uses the altimeter sensor position to set the desired altitude.  The #define GPS_Present
+is inactive in stabilizer_types.h and removes the call to the gps deck drive in sensors_stock.c
+and the call to the compassController() in stabilizer.c.  The Magnetometer sensor data is not
+processed.  This commit contains the more aggressive pid.h values.
+
+>>>>Branch gtgps-3 - This 3rd commit contains the same code as in the 2nd commit except
+the #define GPS_Present is active in stabilizer_types.h.  This enables the sensors->position to
+contains the gps latitude, longitude and height above mean sea level when there is a 3D Fix
+or 3D/DGPS Fix.  In addition, magnetometer-based yaw is placed in state->attitude/yawgeo.  As in
+the 2nd commit the desired altitude using the altimeter is used in the altitude hold mode.  This
+commit contains the more aggressive pid.h values used in the attitude roll/pitch controller.       
+
+
 Date: 2016.05.28
 
 This is the 2nd phase of this project and is an update on the work-in-progress effort to
@@ -63,7 +87,7 @@ The baseline firmware starting point for the source code came from Github crazyf
 branch master 2016.05.19.  For the host pc cfclient, the starting point source code was
 crazy-client-python branch develop 2016.05.11 along with crazyflie-lib-python branch master 2016.04.27. 
 
-Todate, the call to the gtgps.c deck driver has been implemented in sensors_stock.c.  The compass
+To-date, the call to the gtgps.c deck driver has been implemented in sensors_stock.c.  The compass
 controller is located in the module section and the first attempt to call this controller within
 estimated_complementary.c failed due to timing problems.  Currently, the compass controller is
 called from within stabilizer.c.  A few detail comments on each of these code sections can be found

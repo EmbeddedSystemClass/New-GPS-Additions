@@ -26,7 +26,7 @@
 #ifndef __STABILIZER_TYPES_H__
 #define __STABILIZER_TYPES_H__
 
-//#define GPS_Present
+#define GPS_Present
 
 #include <stdint.h>
 #include <stdbool.h>
