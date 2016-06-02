@@ -115,6 +115,9 @@ static float runPid(float input, struct pidAxis_s *axis, mode_t mode,
     axis->setpoint = setpointPos;
   } else if (mode == modeVelocity) {
     axis->setpoint += setpointVel * dt;
+  } else if (mode == modeAbsVel) {
+    axis->setpoint += (setpointVel * dt) + setpointPos - axis->lastsetpoint;
+    axis->lastsetpoint = setpointPos;     
   }
 
   pidSetDesired(&axis->pid, axis->setpoint);
