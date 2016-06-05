@@ -73,10 +73,10 @@ void sensorsAcquire(sensorData_t *sensors, const uint32_t tick)
                  &sensors->baro.asl);
 #endif
 #ifdef GPS_Present
-//    if (RATE_DO_EXECUTE(GPS_RATE, tick))
-//    {
+    if (RATE_DO_EXECUTE(GPS_RATE, tick))
+    {
       gtgpsGetFrameData(&position.timestamp, &position.x, &position.y, &position.z);
-//    }
+    }
 #endif 
     
     // Experimental: receive the position from parameters

@@ -287,16 +287,16 @@ void compassController(state_t *state, const sensorData_t *sensorData, const uin
     if (cosp < 0.0f) cosp = -cosp;
 
     //CF2 Yaw +/- 180 degrees, zero at power on, ccw positive rotation
-    //yawangle +/- 180 degrees, cw positive rotation, zero at true north
+    //yawangle +/- 180 degrees, ccw positive rotation, zero at true north
     //Note roll from eulerActuals (gyro) is negated above
 
     xm = fmagx*cosp + fmagy*sinr*sinp + fmagz*cosr*sinp;
     ym = fmagy*cosr - fmagz*sinr;
 
     yawangle = atan2f(ym,xm) / D2R  + magneticdeclination;
-    AdjAngle(&yawangle);                 //+ angle cw    
-    state->attitude.yawgeo = -yawangle;  //+ angle ccw
-    if (!state->position.timestamp) state->attitude.yawgeo = state->attitude.yaw;  
+    AdjAngle(&yawangle);                 //+ angle cw
+    yawangle = -yawangle;                //+ angle ccw    
+    state->attitude.yawgeo = yawangle;   //+ angle ccw
 //  In converting position (desired-measured) to roll/pitch
 //  D2R = (float) M_PI/180.0f
 //  cos = cosf(yawgeo * D2R)

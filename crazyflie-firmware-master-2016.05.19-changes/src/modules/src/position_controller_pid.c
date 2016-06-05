@@ -96,13 +96,12 @@ static struct this_s this = {
 
 static float runPid(float input, struct pidAxis_s *axis, mode_t mode,
                     float setpointPos, float setpointVel, float dt) {
- 
   if (axis->previousMode == modeDisable && mode != modeDisable) {
     if (mode == modeVelocity) {
       axis->setpoint = input;
     } else if (mode == modeAbsVel) {
       axis->setpoint = setpointPos;
-      axis->lastsetpoint = setpointPos;        
+      axis->lastsetpoint = setpointPos;      
     } else {
       axis->setpoint = setpointPos;
     }
@@ -118,7 +117,7 @@ static float runPid(float input, struct pidAxis_s *axis, mode_t mode,
     axis->setpoint += setpointVel * dt;
   } else if (mode == modeAbsVel) {
     axis->setpoint += (setpointVel * dt) + setpointPos - axis->lastsetpoint;
-    axis->lastsetpoint = setpointPos;
+    axis->lastsetpoint = setpointPos;     
   }
 
   pidSetDesired(&axis->pid, axis->setpoint);
@@ -133,7 +132,6 @@ void positionController(float* thrust, attitude_t *attitude, const state_t *stat
   float y = runPid(state->position.y, &this.pidY, setpoint->mode.y, setpoint->position.y, setpoint->velocity.y, DT);
 
 #ifdef GPS_present
-  if (!state->position.timestamp) state->attitude.yawgeo = state->attitude.yaw;
   float yawRad = state->attitude.yawgeo * (float)M_PI / 180;
 #else
   float yawRad = state->attitude.yaw * (float)M_PI / 180;
