@@ -1,7 +1,7 @@
 # New-GPS-Additions
 crazyflie 1.0/2.0
 
-Date 2016.06.21
+Date 2016.06.24
 
 >>>>Branch gtgps-5 - This commit contains the latest updates as well as the whole python3.4 source code, the whole cfclient source
 code, and the whole cf2 firmware containing the gtgps deck driver. These have been tested in a windows 7 & windows 10 pc environment.
