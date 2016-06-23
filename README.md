@@ -3,7 +3,7 @@ crazyflie 1.0/2.0
 
 Date 2016.06.21
 
->>>>Branch gtgps-7 - This commit contains the latest updates as well as the whole python3.4 source code, the whole cfclient source
+>>>>Branch gtgps-5 - This commit contains the latest updates as well as the whole python3.4 source code, the whole cfclient source
 code, and the whole cf2 firmware containing the gtgps deck driver. These have been tested in a windows 7 & windows 10 pc environment.
 In addition, the earlier branch gtgps-6 that incorporated gyro.yaw drift corrections using the magnetometer sensor and converting the
 gyro.yaw to geographic north reference, this new commit applies gyro drift correction but leaves the gyro.yaw referenced to the cf2
@@ -14,7 +14,8 @@ without compromising gyro heading sensitivity.
 
 Date 2016.06.20
 
->>>>Branch gtgps-6 - This commit contains the latest updates that supports the gtgps, compass, compass calibration, altitude hold and
+>>>>Branch gtgps-6 - Has since been deleted. 
+This commit contains the latest updates that supports the gtgps, compass, compass calibration, altitude hold and
 position hold features.  The github crazyflie-firmware dated 2016.05.19 is still the baseline code for these updates.  This is still
 in the work-in-process state and has yet to be validated by testing the actual flight performance.  In summary, (a) a bug fix was
 applied to position_controller_pid.c, (b) gtgps.c was updated to better define when a position fix can be used for position hold
@@ -27,7 +28,8 @@ updates of the github firmware (after 2016.05.19) are currently not compatible w
 
 Date 2016.06.04
 
->>>>Branch gtgps-5 - This commit completes the planned modifications to function commanderGetSetpoint() in commander.c for setting up
+>>>>Branch gtgps-5 - Has since been deleted.
+This commit completes the planned modifications to function commanderGetSetpoint() in commander.c for setting up
 position hold mode when gps is present and positions are available out of the deck gtgps driver.  This change is in the work-in-process
 state and has yet to be validated by testing.  The pid tuning values in position_controller_pid.c (.pidX & .pidY) are untouched, and
 may require changes in the future. 
