@@ -1,0 +1,1 @@
+Copy build.bat and run.bat to root directory of cfclient source

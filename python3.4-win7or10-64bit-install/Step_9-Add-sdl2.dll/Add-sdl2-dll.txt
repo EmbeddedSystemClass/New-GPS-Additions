@@ -1,0 +1,1 @@
+Copy sdl2.dll to root directory python34 and root directory of cfclient source

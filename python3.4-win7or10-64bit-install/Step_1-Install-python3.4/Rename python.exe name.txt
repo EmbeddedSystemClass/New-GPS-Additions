@@ -1,0 +1,1 @@
+After installing Python 3.4, in the root directory (usually c:\Python34) rename the python.exe to python34.exe

@@ -1,0 +1,7 @@
+At root directory in cfclient source, setup git:
+git init
+git add .
+git config --global user.email "your email address"
+git config --global user.name "your name"
+git commit -m "1st commit"
+git tag 1.0

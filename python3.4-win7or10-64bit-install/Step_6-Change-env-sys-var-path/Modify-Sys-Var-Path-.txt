@@ -1,0 +1,2 @@
+Edit Environment System Variable Path and add:
+c:\python34\;c:\python34\scripts\;c:\python34\tools\scripts\

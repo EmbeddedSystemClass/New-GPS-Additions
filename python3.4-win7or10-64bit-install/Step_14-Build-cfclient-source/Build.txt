@@ -1,0 +1,1 @@
+At root directory in cfclient source, setup command prompt terminal and enter: build
