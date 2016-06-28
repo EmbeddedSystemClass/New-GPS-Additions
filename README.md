@@ -1,6 +1,16 @@
 # New-GPS-Additions
 crazyflie 1.0/2.0
 
+Date 2016.06.27
+
+>>>>Branch gtgps-6 - This commit contains the latest updates involving changes to files gtgps.c, compass.h, compass.c, and
+sensors_stock.c.  If the compass (magnetometer) has not been calibrated, then (a)the gtgps driver does not pass on lat/lon positions,
+(b)yawgeo (yawangle) is (are) set to gyro.yaw, and (c)drift compensation is not applied to gyro.yaw.  As a result, if position hold
+mode is activated when uncalibrated, position x, y and z remain zero values.  A bug fix was applied to the function sensorsAcquire()
+that if position.timestamp is non-zero, the faulty statement "sensor->position = position;" was replaced by individual statements
+"sensor->position.x = position.x;" and correspondingly for y and z, without timestamp.  For an unknown reason setting
+"sensor->position.timestamp" in the point_t structure was clobbering the sensorData_t structure (specifically baro.asl).    
+
 Date 2016.06.24
 
 >>>>Branch gtgps-5 - This commit contains the latest updates as well as the whole python3.4 source code, the whole cfclient source
