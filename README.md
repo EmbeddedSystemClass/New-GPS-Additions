@@ -1,6 +1,11 @@
 # New-GPS-Additions
 crazyflie 1.0/2.0
 
+Date 2016.06.30
+
+>>>>Branch gtgps-6 - This commit contains a fix to the gyro.yaw drift compensation to assure the angle stays within +/- 180 degrees.
+In addition, uart1.c was modified to increase the size of the interrupt buffer.
+
 Date 2016.06.27
 
 >>>>Branch gtgps-6 - This commit contains the latest updates involving changes to files gtgps.c, compass.h, compass.c, and

@@ -119,8 +119,8 @@ static float  yawBias0;
 static float  yawBias1;
 static float  yawGyroBias = 0.0f;
 static float  yawMagBias = 0.0f;
-static uint16_t yawBiasCtr = 2000;
-static uint16_t updateBias = 4000;
+static uint16_t yawBiasCtr = 2000; //8 sec startup delay; function called @ 250Hz 
+static uint16_t updateBias = 4000; //16 sec update; function called @ 250Hz 
 static bool   applyBias = false;
 
 static bool isInit;
@@ -203,9 +203,9 @@ bool compassCalibration(const uint32_t tick)
       magCalibrated = true;
       calRequired = 0;
       applyBias = false;
-      yawBiasCtr = 2000;
+      yawBiasCtr = 2000; //8 sec startup delay; function called @ 250Hz 
       yawMagBias = 0.0f;
-      updateBias = 4000;
+      updateBias = 4000; //16 sec update; function called @ 250Hz
     }
     else {
       magcalOn = false;
@@ -341,8 +341,8 @@ void compassController(state_t *state, const sensorData_t *sensorData, const uin
 
 void compassGyroBias(float* yaw)
 {
-//Compute bias to eliminate drift in gyro based euler yaw actual and
-// convert this actual to heading relative to geographic or true north
+//Compute bias to eliminate drift in gyro based euler yaw actual
+  float temp;
 
   if (magCalibrated)
   {
@@ -354,10 +354,12 @@ void compassGyroBias(float* yaw)
     {
       if (!updateBias--)
       {
-        updateBias = 4000;
+        updateBias = 4000;             //16 sec update; function called @ 250Hz
         yawBias1 = yawBias - yawBias0;
       }
-      *yaw = *yaw - yawBias1;
+      temp = *yaw - yawBias1;
+      AdjAngle(&temp);
+      *yaw = temp; 
     }
     else
     {
