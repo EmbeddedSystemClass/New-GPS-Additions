@@ -26,10 +26,6 @@
 #ifndef GTGPS_H_
 #define GTGPS_H_
 
-#define LAT 0
-#define LON 1
-#define ALT 2
-
 /**
  * Transfer GPS frame data to sensor_stock.c
  */

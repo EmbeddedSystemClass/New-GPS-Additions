@@ -1,6 +1,20 @@
 # New-GPS-Additions
 crazyflie 1.0/2.0
 
+Date 2016.07.02
+
+>>>>Branch gtgps-6 - This commit contains the latest updates involving changes to function sensorsAcquire() in sensors_stock.c,
+to function stateEstimator() in estimator_complementary.c, and the more aggressive pid values used in the attitude roll/pitch controller
+are hard coded in pid.h.  Gyro bias updates in imu_cf.c and thrust tilt compensation in controller_pid.c are not included in this build.
+
+A previous statement that the eeprom is cleared of compass calibration values when the bootloader downloads a new flash program into
+the crazyflie was incorrect. The last compass cal values remain there until a new cal is performed.  The reported problem that the
+"sensor->position.timestamp" in the point_t structure was clobbering baro.asl was incorrect.  A bettter understanding of the baseline
+code in stateEstimator() helped resolve what was actually hapenning to baro.asl and new code was added to properly handle gps fix
+position updates.  Gps position x & y are passed through, and filtered baro.asl continues to be used for position z updates.  Gps hMSL
+is not used to control position z updates.  A future study might be to investigate whether velocity information derived from gps 3D
+positions would be of benefit or not.
+
 Date 2016.06.30
 
 >>>>Branch gtgps-6 - This commit contains a fix to the gyro.yaw drift compensation to assure the angle stays within +/- 180 degrees.

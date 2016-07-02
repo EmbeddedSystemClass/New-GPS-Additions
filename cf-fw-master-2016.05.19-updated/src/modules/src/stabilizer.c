@@ -36,11 +36,12 @@
 
 #include "sensors.h"
 #include "estimator.h"
-#include "compass.h" 
 #include "commander.h"
 #include "sitaw.h"
 #include "controller.h"
 #include "power_distribution.h"
+
+#include "compass.h"  
 
 static bool isInit;
 
@@ -62,7 +63,7 @@ void stabilizerInit(void)
   stateControllerInit();
 #ifdef GPS_Present  
   compassInit();
-#endif
+#endif  
   powerDistributionInit();
 #if defined(SITAW_ENABLED)
   sitAwInit();
@@ -113,7 +114,7 @@ static void stabilizerTask(void* param)
     stateEstimator(&state, &sensorData, tick);
 #ifdef GPS_Present
     compassController(&state, &sensorData, tick);
-#endif  
+#endif     
     commanderGetSetpoint(&setpoint, &state);
 
     sitAwUpdateSetpoint(&setpoint, &sensorData, &state);
