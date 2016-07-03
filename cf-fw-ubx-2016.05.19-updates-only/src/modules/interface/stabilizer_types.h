@@ -26,7 +26,7 @@
 #ifndef __STABILIZER_TYPES_H__
 #define __STABILIZER_TYPES_H__
 
-#define GPS_Present
+#define GPS_Present 
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -43,7 +43,7 @@ typedef struct attitude_s {
   float roll;
   float pitch;
   float yaw;
-  float yawgeo;
+  float yawgeo;  
 } attitude_t;
 
 /* x,y,z vector */
@@ -110,8 +110,8 @@ typedef struct control_s {
 typedef enum mode_e {
   modeDisable = 0,
   modeAbs,
-  modeVelocity,
-  modeAbsVel
+  modeAbsVel,  
+  modeVelocity
 } mode_t;
 
 typedef struct setpoint_s {
@@ -146,10 +146,10 @@ typedef struct setpointZ_s {
 
 // Frequencies to bo used with the RATE_DO_EXECUTE_HZ macro. Do NOT use an arbitrary number.
 #define RATE_1000_HZ 1000
-#define RATE_500_HZ   500
-#define RATE_250_HZ   250
-#define RATE_100_HZ   100
-#define RATE_5_HZ       5
+#define RATE_500_HZ 500
+#define RATE_250_HZ 250
+#define RATE_100_HZ 100
+#define RATE_5_HZ   5
 
 #define RATE_MAIN_LOOP RATE_1000_HZ
 

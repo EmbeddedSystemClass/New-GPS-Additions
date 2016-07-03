@@ -27,7 +27,7 @@
 
 #include <stdint.h>
 #include <string.h>
-#include <stdio.h>
+//#include <stdio.h> //conflict with stabilizer_types.h via #include "compass.h"
 
 #include "stm32fxxx.h"
 #include "config.h"
@@ -42,6 +42,8 @@
 #include <stdlib.h>
 #include <math.h>
 #include "log.h"
+
+#include "compass.h"
 
 #define ENABLE_GPS_DECK
 
@@ -174,16 +176,17 @@ static void saveFrameData(void)
 {
   static float phi;
     
-  phi = m.lat / 10000000.0f * D2R;
-  gps_scaleLon = cosf(phi) * gps_scaleLat;
-
 //Assume 3D Fix or 3D Fix/DGPS    
-  if ((m.fixType > 2) && !gps_setHome)
+  if ((m.fixType > 2) && (m.numSat >= 5) && (gps_hAcc <= 6.0f))
   {
-    gps_latHome = m.lat;   //deg * 1e+7
-    gps_lonHome = m.lon;   //deg * 1e+7
-    gps_setHome = true;
-  }
+    if (!gps_setHome)  
+    {
+      gps_latHome = m.lat;   //deg * 1e+7
+      gps_lonHome = m.lon;   //deg * 1e+7
+      gps_setHome = true;
+      phi = m.lat / 10000000.0f * D2R;
+      gps_scaleLon = cosf(phi) * gps_scaleLat;    
+    }
     
 //Assume right-hand xyz cartesian coordinate system
 //Assume x = latitude pointing to North geographic or plus latitude  
@@ -191,19 +194,31 @@ static void saveFrameData(void)
 //Assume z = vertical pointing downward or minus hMSL
 //Assume yawgeo is +/- 180 degrees and + is counterclockwise
 //Assume yawgeo in degrees is available to map xyz to level cf1/cf2 fwd direction   
-//Preserve 1 cm significance by using Home position offset    
-  pos_x = (m.lat - gps_latHome) * gps_scaleLat;   //meters
-  pos_y = -(m.lon - gps_lonHome) * gps_scaleLon;  //meters
-  pos_z = -gps_hMSL;                   //meters
-//Assume 3D Fix or 3D Fix/DGPS 
-  if ((m.fixType > 2) && (m.numSat >= 5) && (gps_hAcc <= 2.0f) && gps_setHome) timestamp = 1; else timestamp = 0;
+//Preserve 1 cm significance by using Home position offset
+
+    else if (compassCaled())
+    {
+      timestamp = 1;  
+      pos_x = (m.lat - gps_latHome) * gps_scaleLat;   //meters
+      pos_y = -(m.lon - gps_lonHome) * gps_scaleLon;  //meters
+      pos_z = -gps_hMSL;                              //meters
+    }
+  }  
+  else
+  {
+    timestamp = 0;     
+    pos_x = 0.0f;
+    pos_y = 0.0f;
+    pos_z = 0.0f;
+  }
 
 //  In converting position (desired-measured) to roll/pitch
 //  D2R = (float) M_PI/180.0f
 //  cos = cosf(yawgeo * D2R)
 //  sin = sinf(yawgeo * D2R)
 //  pitch = - position.x * cos - position.y * sin
-//  roll  = - position.y * cos + position.x * sin 
+//  roll  = - position.y * cos + position.x * sin
+  
 }
 
 static char dkgpsGetc()
@@ -391,5 +406,5 @@ LOG_GROUP_START(gps_dpos)
 LOG_ADD(LOG_FLOAT, pos_x, &pos_x)
 LOG_ADD(LOG_FLOAT, pos_y, &pos_y)
 LOG_ADD(LOG_FLOAT, pos_z, &pos_z)
-LOG_ADD(LOG_FLOAT, timestamp, &timestamp)
+LOG_ADD(LOG_UINT32, timestamp, &timestamp)
 LOG_GROUP_STOP(gps_dpos)

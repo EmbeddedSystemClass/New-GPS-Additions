@@ -1,6 +1,14 @@
 # New-GPS-Additions
 crazyflie 1.0/2.0
 
+Date 2016.07.02
+
+>>>>Branch dkgps-6 - This commit contains the latest firmware updates for the
+uBlox Max M8c Pico Breakout with Chip Antenna gps receiver.  The firmware is
+identical to that of Branch gtgps-6 for the GlobalTop Titan-2 gps receiver,
+except for the deck driver, the config.mk, the makefile, and the corresponding
+changes in sensors_stock.c.
+
 Date 2016.06.24
 
 >>>>Branch dkgps-5 - This commit contains the latest firmware updates for the

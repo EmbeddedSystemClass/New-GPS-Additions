@@ -101,7 +101,7 @@ static float runPid(float input, struct pidAxis_s *axis, mode_t mode,
       axis->setpoint = input;
     } else if (mode == modeAbsVel) {
       axis->setpoint = setpointPos;
-      axis->lastsetpoint = setpointPos;      
+      axis->lastsetpoint = setpointPos;        
     } else {
       axis->setpoint = setpointPos;
     }

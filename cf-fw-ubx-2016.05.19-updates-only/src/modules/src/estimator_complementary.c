@@ -34,9 +34,11 @@ void stateEstimator(state_t *state, const sensorData_t *sensorData, const uint32
                        sensorData->acc.x, sensorData->acc.y, sensorData->acc.z,
                        ATTITUDE_UPDATE_DT);
     sensfusion6GetEulerRPY(&state->attitude.roll, &state->attitude.pitch, &state->attitude.yaw);
+
 #ifdef GPS_Present
     compassGyroBias(&state->attitude.yaw);
 #endif
+
     state->acc.z = sensfusion6GetAccZWithoutGravity(sensorData->acc.x,
                                                     sensorData->acc.y,
                                                     sensorData->acc.z);
@@ -45,6 +47,15 @@ void stateEstimator(state_t *state, const sensorData_t *sensorData, const uint32
   }
 
   if (RATE_DO_EXECUTE(POS_UPDATE_RATE, tick)) {
+      
+#ifdef GPS_Present
+  positionEstimate(state, sensorData->baro.asl, POS_UPDATE_DT);
+  if (sensorData->position.timestamp)
+  {
+   state->position.x = sensorData->position.x;
+   state->position.y = sensorData->position.y;
+  }
+#else     
     // If position sensor data is preset, pass it throught
     // FIXME: The position sensor shall be used as an input of the estimator
     if (sensorData->position.timestamp) {
@@ -52,5 +63,6 @@ void stateEstimator(state_t *state, const sensorData_t *sensorData, const uint32
     } else {
       positionEstimate(state, sensorData->baro.asl, POS_UPDATE_DT);
     }
+#endif
   }
 }
