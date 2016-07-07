@@ -117,7 +117,11 @@ static bool   magCalibrated;
 static float  yawBias;
 static float  yawBias0;
 static float  yawBias1;
+static float  yawGyro;
+static float  yawGyro0;
+static float  yawFusion;
 static float  yawGyroBias = 0.0f;
+static float  yawDrift;
 static float  yawMagBias = 0.0f;
 static uint16_t yawBiasCtr = 2000; //8 sec startup delay; function called @ 250Hz 
 static uint16_t updateBias = 4000; //16 sec update; function called @ 250Hz 
@@ -342,32 +346,46 @@ void compassController(state_t *state, const sensorData_t *sensorData, const uin
 void compassGyroBias(float* yaw)
 {
 //Compute bias to eliminate drift in gyro based euler yaw actual
-  float temp;
+
+float temp;
 
   if (magCalibrated)
   {
+    yawGyro = *yaw;
     yawGyroBias = (yawGyroBias * 99.0f + abs(*yaw)) / 100.0f;
     if (*yaw < 0.0f) yawBias = -yawGyroBias; else yawBias = yawGyroBias;
     yawMagBias = (yawMagBias * 99.0f + abs(yawangle)) / 100.0f;
     if (yawangle < 0.0f) yawBias += yawMagBias; else yawBias -= yawMagBias;
+    AdjAngle(&yawBias);
+        
     if (applyBias)
     {
       if (!updateBias--)
       {
-        updateBias = 4000;             //16 sec update; function called @ 250Hz
-        yawBias1 = yawBias - yawBias0;
+        updateBias = 4000;  //16 sec update; function called @ 250Hz
+        temp = yawGyro - yawGyro0;
+        yawGyro0 = yawGyro;
+        AdjAngle(&temp);
+        if (abs(temp) < 10.0f) yawDrift = (yawBias - yawBias0) / 4000.0f;
+        yawBias0 = yawBias;
+        
       }
-      temp = *yaw - yawBias1;
+      yawBias1 += yawDrift; 
+      temp = *yaw - yawBias1; 
       AdjAngle(&temp);
-      *yaw = temp; 
+      yawFusion = temp;
+#if defined(GYRO_MAG_FUSION_ENABLE)
+      *yaw = temp;
+#endif
     }
     else
     {
       if (!yawBiasCtr--)
       {
         applyBias = true;
-        yawBias0 = yawBias;
         yawBias1 = 0.0f;
+        yawBias0 = yawBias;
+        yawGyro0 = yawGyro;
       }
     }
   }  
@@ -379,7 +397,7 @@ bool compassCaled(void)
 }
 
 PARAM_GROUP_START(compass)
-PARAM_ADD(PARAM_UINT8, calSeqButton, &calSeqButton)
+PARAM_ADD(PARAM_UINT8, calSeqButton,  &calSeqButton)
 PARAM_ADD(PARAM_UINT8, calHorzButton, &calHorzButton)
 PARAM_ADD(PARAM_UINT8, calVertButton, &calVertButton)
 PARAM_GROUP_STOP(compass)
@@ -388,16 +406,16 @@ LOG_GROUP_START(compassFac)
 LOG_ADD(LOG_FLOAT, xoff, &xoff)
 LOG_ADD(LOG_FLOAT, yoff, &yoff)
 LOG_ADD(LOG_FLOAT, zoff, &zoff)
-LOG_ADD(LOG_FLOAT, xsf, &xsf)
-LOG_ADD(LOG_FLOAT, ysf, &ysf)
-LOG_ADD(LOG_FLOAT, zsf, &zsf)
+LOG_ADD(LOG_FLOAT, xsf,  &xsf)
+LOG_ADD(LOG_FLOAT, ysf,  &ysf)
+LOG_ADD(LOG_FLOAT, zsf,  &zsf)
 LOG_ADD(LOG_UINT8, cb_write, &cb_write)
-LOG_ADD(LOG_UINT8, cb_read, &cb_read)
+LOG_ADD(LOG_UINT8, cb_read,  &cb_read)
 LOG_GROUP_STOP(compassFac)
 
 LOG_GROUP_START(compassCal)
-LOG_ADD(LOG_UINT8,  magcalOn, &magcalOn)
-LOG_ADD(LOG_UINT8,  calRequired, &calRequired)
+LOG_ADD(LOG_UINT8, magcalOn, &magcalOn)
+LOG_ADD(LOG_UINT8, calRequired, &calRequired)
 LOG_ADD(LOG_INT16, xmax, &xmax)
 LOG_ADD(LOG_INT16, xmin, &xmin)
 LOG_ADD(LOG_INT16, ymax, &ymax)
@@ -407,8 +425,8 @@ LOG_ADD(LOG_INT16, zmin, &zmin)
 LOG_GROUP_STOP(compassCal)
 
 LOG_GROUP_START(compass)
-LOG_ADD(LOG_FLOAT,  yawgeo, &yawangle)
-LOG_ADD(LOG_UINT8,  magCaled, &magCalibrated)
-LOG_ADD(LOG_FLOAT,  yawBias0, &yawBias0)
-LOG_ADD(LOG_FLOAT,  yawBias, &yawBias)
+LOG_ADD(LOG_FLOAT,  yawMag,    &yawangle)
+LOG_ADD(LOG_UINT8,  magCaled,  &magCalibrated)
+LOG_ADD(LOG_FLOAT,  yawGyro,   &yawGyro)
+LOG_ADD(LOG_FLOAT,  yawFusion, &yawFusion)
 LOG_GROUP_STOP(compass)
