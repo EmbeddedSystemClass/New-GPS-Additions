@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "files": {
+      "cf2.bin": {
+        "platform": "cf2",
+        "target": "stm32",
+        "type": "fw"
+      },
+      "cf2_nrf.bin": {
+        "platform": "cf2",
+        "target": "nrf51",
+        "type": "fw"
+      }
+   }
+}
