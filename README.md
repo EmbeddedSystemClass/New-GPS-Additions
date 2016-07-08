@@ -1,6 +1,21 @@
 # New-GPS-Additions
 crazyflie 1.0/2.0
 
+Date 2016.07.08
+
+>>>>Branch dkgps-7 - This commit contains the latest updates involving changes to
+function compassGyroBias() in compass.c.  Gyro->yaw drift compensation has been
+enabled using CFLAGS += -DGYRO_MAG_FUSION_ENABLE in config.mk.  The code computing
+drift correction in function compassGyroBias() has been simplified and appears more
+robust than the previous implementation.  Gyro bias updates in imu_cf2.c and thrust
+tilt compensation in controller_pid.c are included in this build.
+
+Perhaps another qualification regarding eeprom retention of compass calibration
+values is that bootloading firmware into the crazyflie that is something other than
+a dkgps-6 or newer dkgps commit, will effectively erase the calibrations values.
+In this case, after downloading a dkgps-6 or newer commit, the compass will need to
+be calibrated once again. 
+
 Date 2016.07.02
 
 >>>>Branch dkgps-6 - This commit contains the latest firmware updates for the
