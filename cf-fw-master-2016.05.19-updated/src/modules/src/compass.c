@@ -116,15 +116,11 @@ static float  yawangle;
 static bool   magCalibrated;
 static float  yawBias;
 static float  yawBias0;
+static float  yawDrift;
 static float  yawBias1;
 static float  yawGyro;
-static float  yawGyro0;
 static float  yawFusion;
-static float  yawGyroBias = 0.0f;
-static float  yawDrift;
-static float  yawMagBias = 0.0f;
-static uint16_t yawBiasCtr = 2000; //8 sec startup delay; function called @ 250Hz 
-static uint16_t updateBias = 4000; //16 sec update; function called @ 250Hz 
+static uint16_t yawBiasCtr = 100; //0.4 sec startup delay; function called @ 250Hz 
 static bool   applyBias = false;
 
 static bool isInit;
@@ -207,9 +203,7 @@ bool compassCalibration(const uint32_t tick)
       magCalibrated = true;
       calRequired = 0;
       applyBias = false;
-      yawBiasCtr = 2000; //8 sec startup delay; function called @ 250Hz 
-      yawMagBias = 0.0f;
-      updateBias = 4000; //16 sec update; function called @ 250Hz
+      yawBiasCtr = 100; //0.4 sec startup delay; function called @ 250Hz
     }
     else {
       magcalOn = false;
@@ -347,47 +341,31 @@ void compassGyroBias(float* yaw)
 {
 //Compute bias to eliminate drift in gyro based euler yaw actual
 
-float temp;
-
+  yawGyro = *yaw;
   if (magCalibrated)
   {
-    yawGyro = *yaw;
-    yawGyroBias = (yawGyroBias * 99.0f + abs(*yaw)) / 100.0f;
-    if (*yaw < 0.0f) yawBias = -yawGyroBias; else yawBias = yawGyroBias;
-    yawMagBias = (yawMagBias * 99.0f + abs(yawangle)) / 100.0f;
-    if (yawangle < 0.0f) yawBias += yawMagBias; else yawBias -= yawMagBias;
-    AdjAngle(&yawBias);
-        
     if (applyBias)
-    {
-      if (!updateBias--)
-      {
-        updateBias = 4000;  //16 sec update; function called @ 250Hz
-        temp = yawGyro - yawGyro0;
-        yawGyro0 = yawGyro;
-        AdjAngle(&temp);
-        if (abs(temp) < 10.0f) yawDrift = (yawBias - yawBias0) / 4000.0f;
-        yawBias0 = yawBias;
-        
-      }
-      yawBias1 += yawDrift; 
-      temp = *yaw - yawBias1; 
-      AdjAngle(&temp);
-      yawFusion = temp;
+    {  
+      yawBias = yawGyro - yawangle - yawBias1;
+      AdjAngle(&yawBias);
+      yawDrift = (yawDrift * 99.995f + (yawBias - yawBias0)) / 100.0f; //TC=80s
+      yawBias1 += yawDrift;
+      yawBias0 = yawBias; 
+      yawFusion = yawGyro - yawBias1; 
+      AdjAngle(&yawFusion);
 #if defined(GYRO_MAG_FUSION_ENABLE)
-      *yaw = temp;
-#endif
+      *yaw = yawFusion;
+#endif      
     }
     else
     {
-      if (!yawBiasCtr--)
+      if (!yawBiasCtr--) //wait for 5Hz to catch up 
       {
+        yawBias0 = yawGyro - yawangle - yawBias1;
+        AdjAngle(&yawBias0);
         applyBias = true;
-        yawBias1 = 0.0f;
-        yawBias0 = yawBias;
-        yawGyro0 = yawGyro;
       }
-    }
+    } 
   }  
 }
 
