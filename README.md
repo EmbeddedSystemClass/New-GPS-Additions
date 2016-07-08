@@ -5,7 +5,7 @@ Date 2016.07.08
 
 >>>>Branch gtgps-7 - This commit contains the latest updates involving changes to function compassGyroBias() in compass.c.  Gyro->yaw
 drift compensation has been enabled using CFLAGS += -DGYRO_MAG_FUSION_ENABLE in config.mk.  The code computing drift correction in
-function ompassGyroBias() has been simplified and appears more robust than the previous implementation.  
+function compassGyroBias() has been simplified and appears more robust than the previous implementation.  
 
 Date 2016.07.07
 
