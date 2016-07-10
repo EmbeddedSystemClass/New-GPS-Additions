@@ -1,8 +1,6 @@
 # New-GPS-Additions
 crazyflie 1.0/2.0
 
-Date 2016.07.08
-
 Date 2016.07.10
 
 >>>>Branch gtgps-7 - This commit contains the latest updates involving changes to function compassGyroBias() in compass.c.
@@ -11,6 +9,8 @@ config.mk.  The noise level on yawFusion (yawGyro & yawMag) has been lowered to 
 to yawFusion), it no longer disturbs the crazyflie yaw stability when flying.  As mentioned earlier, gyro->yaw appears to lose a small
 amount of absolute value when the crazyflie is subjected to attitude dynamics, but the yawMag drift compensation appears to nicely
 compensate for this.
+
+Date 2016.07.08
 
 >>>>Branch gtgps-7 - This commit contains the latest updates involving changes to function compassGyroBias() in compass.c.  Gyro->yaw
 drift compensation has been disabled.  The code computing drift correction in function compassGyroBias() has been simplified and
