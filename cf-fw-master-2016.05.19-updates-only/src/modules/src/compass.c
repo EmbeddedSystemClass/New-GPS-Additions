@@ -340,16 +340,19 @@ void compassController(state_t *state, const sensorData_t *sensorData, const uin
 void compassGyroBias(float* yaw)
 {
 //Compute bias to eliminate drift in gyro based euler yaw actual
+  float temp;
 
   yawGyro = *yaw;
   if (magCalibrated)
   {
     if (applyBias)
     {  
-      yawBias = yawGyro - yawangle - yawBias1;
+      yawBias = yawGyro - yawangle;
       AdjAngle(&yawBias);
-      yawDrift = (yawDrift * 99.995f + (yawBias - yawBias0)) / 100.0f; //TC=80s
-      yawBias1 += yawDrift;
+      temp = yawBias - yawBias0;
+      AdjAngle(&temp);
+      yawDrift = (yawDrift * 99.98f + temp * 0.02f) / 100.0f; //TC=20s
+      if (!yawBiasCtr) yawBias1 += yawDrift; else --yawBiasCtr;
       yawBias0 = yawBias; 
       yawFusion = yawGyro - yawBias1; 
       AdjAngle(&yawFusion);
@@ -359,10 +362,12 @@ void compassGyroBias(float* yaw)
     }
     else
     {
-      if (!yawBiasCtr--) //wait for 5Hz to catch up 
+      if (!yawBiasCtr--)       //wait for 5Hz to catch up 
       {
-        yawBias0 = yawGyro - yawangle - yawBias1;
+        yawBias0 = yawGyro - yawangle;
         AdjAngle(&yawBias0);
+        yawDrift = 0.0f;
+        yawBiasCtr = 5000.0f; //20s delay, 1 TC
         applyBias = true;
       }
     } 
