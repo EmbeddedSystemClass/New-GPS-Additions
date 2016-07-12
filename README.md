@@ -3,6 +3,29 @@ crazyflie 1.0/2.0
 
 Date 2016.07.10
 
+>>>>Branch gtgps-8 - This new branch and new commit contains the latest updates involving changes to compass.c and small changes to
+commander.h and commander.c. The code change simplifies compass calibration using the device controller.
+
+The prior implementation required three buttons or equivalent actuation's on the device controller to communicate when to perform
+a calibration, when to take readings of a full circle rotation of the horizontally held crazyflie in the horizontal plane, when to
+take full circle vertically orientated crazyflie readings in the horizontal plane, and finally when to calculate a new set of
+calibration parameters using these readings.
+
+This new approach eliminates the extra buttons by detecting the switching of the position hold mode switch (toggle on/off) 5 times
+in quick succession (within a 5 second period).  The M1 LED becomes a solid green indicating when to begin rotating the horiontally
+held crazyflie, after 350 degrees is detected. the the M1 KED turns a solid red indicating when to begin rotating a vertically held
+crazyflie.  When internally recognizing the 360 degrees circle is completed, the calibration parameters are automatically updated.
+Then the M1 LED returns to its normal flashing red condition.  Once the calibration procedure has begun and the M1 LED is a solid
+color, if necessary the procedure can be aborted by repeating the 5 times toggle of the position hold mode switch.
+
+When the M1 LED is green, readings begin when the crazyflie roll and pitch angles are both less than +/- 25 degrees.  When the M1 LED
+is a solid red, reading begin when the roll angle is more than +/- 65 degrees and the pitch angle remains less than +/- 25 degrees.
+
+The original plan was to put the nose down (pitch -90 degrees), but a quirk in the current baseline firmware prevented this. Currently,
+the port side must be down or the starboard side must be down for the vertically held crazyflie horizontal rotation segment.
+
+Date 2016.07.10
+
 >>>>Branch gtgps-7 - This commit contains the latest updates involving changes to function compassGyroBias() in compass.c.
 Gyro->yaw drift compensation has been disabled in this commit. It can be enabled by setting CFLAGS += -DGYRO_MAG_FUSION_ENABLE in
 config.mk.  The noise level on yawFusion (yawGyro & yawMag) has been lowered to the point that when enabled (gyro->yaw is set equal
