@@ -1,7 +1,7 @@
 # New-GPS-Additions
 crazyflie 1.0/2.0
 
-Date 2016.07.10
+Date 2016.07.12
 
 >>>>Branch gtgps-8 - This new branch and new commit contains the latest updates involving changes to compass.c and small changes to
 commander.h and commander.c. The code change simplifies compass calibration using the device controller.
@@ -13,7 +13,7 @@ calibration parameters using these readings.
 
 This new approach eliminates the extra buttons by detecting the switching of the position hold mode switch (toggle on/off) 5 times
 in quick succession (within a 5 second period).  The M1 LED becomes a solid green indicating when to begin rotating the horiontally
-held crazyflie, after 350 degrees is detected. the the M1 KED turns a solid red indicating when to begin rotating a vertically held
+held crazyflie. After 350 degrees is detected. the the M1 KED turns a solid red indicating when to begin rotating a vertically held
 crazyflie.  When internally recognizing the 360 degrees circle is completed, the calibration parameters are automatically updated.
 Then the M1 LED returns to its normal flashing red condition.  Once the calibration procedure has begun and the M1 LED is a solid
 color, if necessary the procedure can be aborted by repeating the 5 times toggle of the position hold mode switch.
