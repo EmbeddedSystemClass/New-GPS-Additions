@@ -1,6 +1,23 @@
 # New-GPS-Additions
 crazyflie 1.0/2.0
 
+Date 2016.07.15
+
+>>>>Branch gtgps-9 - This new branch and new commit contains the latest updates involving changes to sensfusion6.c The code change
+in function sensfusion6GetEulerRPY() corrects roll, pitch and yaw when roll or pitch nears +/- 90 degrees and when the crazyflie
+tumbles or flies upside-down.
+
+It also facilitates performing compass calibration when the crazyflie is vertically held with the nose up or nose down.  Before
+this code change, only starboard side down or port side up could actually be used.  This commit does not change this limitation,
+but a future commit will take advantage of the modified Euler angles and not have such orientation restrictions.
+
+In function sensfusion6GetEulerRPY(), the new code handles the conversion from quaternion to Euler angles when yaw hits the
+singularities near a +/- 90 degree pitch angle.  This situation also known as gimbal lock, is handled specially.  The pitch angle
+is now +/- 180 degrees instead of +/- 90 degrees.  In addition, some numerical instabilities have been corrected when certain
+quaternion values are used within the arctan2(n,d) trigonometric function.
+
+Not tested, but the new Euler angles should work better in the special cases the crazyflie tumbles or is flown upside down. 
+
 Date 2016.07.12
 
 >>>>Branch gtgps-8 - This new branch and new commit contains the latest updates involving changes to compass.c and small changes to

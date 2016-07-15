@@ -462,7 +462,7 @@ void compassCalSwMode(float roll, float pitch, float yaw)
       if (abs(roll) <= 25.0f && abs(pitch) <= 25.0f)
       {
         ledSet(LED_GREEN_R, 1);  
-        ledseqStop(SYS_LED, seq_alive);
+//        ledseqStop(SYS_LED, seq_alive);
         ledseqStop(SYS_LED, seq_calibrated);
         testYaw = yaw;
         if (testYaw == 0.0f) testYaw = 1.0f;  //special case
