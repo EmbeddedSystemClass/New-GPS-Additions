@@ -1,6 +1,12 @@
 # New-GPS-Additions
 crazyflie 1.0/2.0
 
+Date 2016.07.16
+
+>>>>Branch gtgps-9 - This update and new commit contains the latest updates involving changes to sensfusion6.c The code change
+in function sensfusion6GetEulerRPY() corrects a minor bug.  In addition map.js has been updated in cfclient that replaces the
+url from MapQuest to OpenSourceMap.  Map.js is used to generate the display map in GpsTab.py. 
+
 Date 2016.07.15
 
 >>>>Branch gtgps-9 - This new branch and new commit contains the latest updates involving changes to sensfusion6.c The code change

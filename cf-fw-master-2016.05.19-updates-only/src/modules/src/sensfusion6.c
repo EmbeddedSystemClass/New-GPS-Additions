@@ -307,7 +307,6 @@ void sensfusion6GetEulerRPY(float* roll, float* pitch, float* yaw)
     if ((*pitch > 45) || (*pitch < -45))
     {
       p_cusd = true;
-      r_cusd = false;
     }
     else p_cusd = false;
   }
@@ -330,7 +329,6 @@ void sensfusion6GetEulerRPY(float* roll, float* pitch, float* yaw)
     if ((*roll > 45) || (*roll < -45))
     {
       r_cusd = true;
-      p_cusd = false;
     }
     else r_cusd = false;
   }
