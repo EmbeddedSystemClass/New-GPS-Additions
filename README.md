@@ -1,6 +1,12 @@
 # New-GPS-Additions
 crazyflie 1.0/2.0
 
+Date 2016.09.17
+
+>>>>Branch gtgps-9 - This update and new commit contains the latest updates involving changes to config.mk.  This code change
+corrected an error that crept in 2016.07.10 Branch gtgps-7 and affected the subsequent Branches gtgps-8 and gtgps-9 prior to
+this update.  The error caused the GTGPS deck driver not to enumerated.
+
 Date 2016.07.16
 
 >>>>Branch gtgps-9 - This update and new commit contains the latest updates involving changes to sensfusion6.c The code change
