@@ -43,16 +43,24 @@
 #include <math.h>
 #include "log.h"
 
-#include "compass.h"
-
 #define ENABLE_GPS_DECK
 
 /**
  * dkgps.h is needed for the Position Hold capability
- * and when gygps.c is called by sensors_stock.c
+ * and when dkgps.c is called by sensors_stock.c to pick up
+ * 3D fix positions
  */ 
 
 #include "dkgps.h"
+
+#if defined(COMPASS_ENABLED)
+/**
+ * compass.h is needed for the Position Hold Mode capability
+ * and when dkgps.c calls compass.c to see if is calibrated
+ */  
+
+#include "compass.h"
+#endif 
 
 static bool isInit;
 
@@ -195,7 +203,9 @@ static void saveFrameData(void)
 //Assume yawgeo is +/- 180 degrees and + is counterclockwise
 //Assume yawgeo in degrees is available to map xyz to level cf1/cf2 fwd direction   
 //Preserve 1 cm significance by using Home position offset
-
+//don't output positions until compass is calibrated
+    
+#if defined(COMPASS_ENABLED) 
     else if (compassCaled())
     {
       timestamp = 1;  
@@ -203,6 +213,7 @@ static void saveFrameData(void)
       pos_y = -(m.lon - gps_lonHome) * gps_scaleLon;  //meters
       pos_z = -gps_hMSL;                              //meters
     }
+#endif    
   }  
   else
   {
@@ -212,6 +223,7 @@ static void saveFrameData(void)
     pos_z = 0.0f;
   }
 
+//This code can be found in position_controller_pid.c
 //  In converting position (desired-measured) to roll/pitch
 //  D2R = (float) M_PI/180.0f
 //  cos = cosf(yawgeo * D2R)
@@ -403,8 +415,8 @@ LOG_ADD(LOG_UINT32,fixtime, &m.itow)
 LOG_GROUP_STOP(gps)
 
 LOG_GROUP_START(gps_dpos)
+LOG_ADD(LOG_UINT32, timestamp, &timestamp)
 LOG_ADD(LOG_FLOAT, pos_x, &pos_x)
 LOG_ADD(LOG_FLOAT, pos_y, &pos_y)
 LOG_ADD(LOG_FLOAT, pos_z, &pos_z)
-LOG_ADD(LOG_UINT32, timestamp, &timestamp)
 LOG_GROUP_STOP(gps_dpos)

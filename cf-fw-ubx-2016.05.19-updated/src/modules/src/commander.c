@@ -351,6 +351,12 @@ void commanderGetSetpoint(setpoint_t *setpoint, const state_t *state)
   setpoint->mode.yaw = modeVelocity;
 }
 
+bool commanderGetActivity(void)
+{
+  return posHoldMode; 
+}
+
+
 // Params for flight modes
 PARAM_GROUP_START(flightmode)
 PARAM_ADD(PARAM_UINT8, althold, &altHoldMode)

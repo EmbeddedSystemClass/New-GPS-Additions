@@ -35,6 +35,9 @@
 #include "log.h"
 #include "num.h"
  
+#include "ledseq.h"
+#include "commander.h"
+ 
 #include "configblock.h" 
 
 #define COMPASS_RATE RATE_5_HZ
@@ -123,7 +126,19 @@ static float  yawFusion;
 static uint16_t yawBiasCtr = 100; //0.4 sec startup delay; function called @ 250Hz 
 static bool   applyBias = false;
 
+static bool lastOn = false;
+static bool timeout = true;
+static bool beginCal = false;
+static bool beginCalX = false;
+static bool midway = false;
+static uint8_t activity = 0;
+static uint8_t timeoutCtr = 0;
+static float testYaw;
+
 static bool isInit;
+
+void compassCalSwitch(void);
+void compassCalSwMode(float roll, float pitch, float yaw);
 
 void compassInit(void)
 {
@@ -214,21 +229,24 @@ bool compassCalibration(const uint32_t tick)
 }
 
 void compassController(state_t *state, const sensorData_t *sensorData, const uint32_t tick)
-{
-#ifdef CAL_BUTTONS    
-  if (calSeqButton) {
-    if ((calRequired % 2) == 0) calRequired++;
-  }
-  else if (calHorzButton && calRequired == 1) {
-    calRequired++;
-  }  
-  else if (calVertButton && calRequired == 3) {      
-    calRequired++;    
-  }
-#endif  
+{ 
   // Begin 100Hz updates  
   if (RATE_DO_EXECUTE(COMPASS_CAL_RATE, tick))
   {
+#ifdef CAL_BUTTONS    
+    if (calSeqButton) {
+      if ((calRequired % 2) == 0) calRequired++;
+    }
+    else if (calHorzButton && calRequired == 1) {
+      calRequired++;
+    }  
+    else if (calVertButton && calRequired == 3) {      
+      calRequired++;    
+    }
+#endif       
+    compassCalSwitch();
+    compassCalSwMode(state->attitude.roll, state->attitude.pitch, state->attitude.yaw);  //single compass call  switch
+    
     //Magnetometer axis data is used to calculate geodetic cf2 yaw angle
     // which is needed to apply gps lat && lon corrections to cf2 roll and pitch.
 
@@ -276,8 +294,8 @@ void compassController(state_t *state, const sensorData_t *sensorData, const uin
     }
     if (calRequired > 4) calRequired = 0;
 #endif
-             
-    compassCalibration(tick);
+
+    compassCalibration(tick); 
 
   } // end 100Hz updates
   
@@ -333,8 +351,143 @@ void compassController(state_t *state, const sensorData_t *sensorData, const uin
 //  sin = sinf(yawgeo * D2R)
 //  pitch = - position.x * cos - position.y * sin
 //  roll  = - position.y * cos + position.x * sin
-    
+     
   } //End 5 Hz updates
+}
+
+void compassCalSwitch(void)
+{
+// Detect posHoldMode switch toggle >= 5 times in <= than 5 seconds
+
+  if (commanderGetActivity() && !beginCalX)
+  {
+    if (!lastOn)
+    {
+      lastOn = true;
+      timeoutCtr = 100;
+      timeout = false;        
+    }
+    else
+    {
+      if (!timeout && !--timeoutCtr)
+      {
+        timeout = true;
+        activity = 0; 
+      }
+    }
+  }
+  else if (!beginCalX)
+  {
+    if (lastOn)
+    {
+      if (!timeout)
+      {
+        if (++activity >= 5)
+        {
+          activity = 0;
+          beginCalX = true;
+          if (beginCal)
+          {
+            ledSet(LED_GREEN_R, 0);
+            ledSet(SYS_LED, 0);          
+            ledseqRun(SYS_LED, seq_calibrated);
+            beginCal = false;
+            beginCalX = false;
+            calRequired = 0;
+            magcalOn = false;            
+          }
+          else
+          {
+            beginCal = true;
+          }
+        }
+      }
+      lastOn = false;
+      timeoutCtr = 100;
+      timeout = false;        
+    }
+    else 
+    {
+      if (!timeout && !--timeoutCtr)
+      {
+        timeout = true;
+        activity = 0;
+      }
+    }      
+  }
+}
+
+void compassCalSwMode(float roll, float pitch, float yaw)
+{
+  float temp;
+
+  if (beginCal) 
+  {
+    if ((calRequired % 2) == 0)
+    {
+      if (calRequired == 0)
+      {
+        calRequired++;
+      }
+      else if ((calRequired == 2) || (calRequired == 4))
+      {
+        temp = yaw - testYaw;
+        AdjAngle(&temp); 
+        if (abs(temp) <= 10.0f)
+        {
+          if (!midway)
+          {
+            midway = true;
+            testYaw -= 180.0f;
+            AdjAngle(&testYaw);            
+          }
+          else 
+          { 
+            midway = false;
+            calRequired++;
+            if (calRequired == 5)
+            {
+              ledSet(LED_GREEN_R, 0);
+              ledSet(SYS_LED, 0);          
+              ledseqRun(SYS_LED, seq_calibrated);
+              beginCal = false;
+              beginCalX = false;
+            }
+          }
+        }
+      }              
+    }
+    else if (calRequired == 1)
+    {
+      if (abs(roll) <= 25.0f && abs(pitch) <= 25.0f)
+      {
+        ledSet(LED_GREEN_R, 1);  
+//        ledseqStop(SYS_LED, seq_alive);
+        ledseqStop(SYS_LED, seq_calibrated);
+        testYaw = yaw;
+        if (testYaw == 0.0f) testYaw = 1.0f;  //special case
+        testYaw += 180.0f;
+        AdjAngle(&testYaw);
+        midway = false;
+        beginCalX = false;
+        calRequired++;
+      }
+    }  
+    else if (calRequired == 3)
+    {      
+      if (abs(roll) >= 65.0f && abs(pitch) <= 25.0f)
+      {
+        ledSet(LED_GREEN_R, 0);
+        ledSet(SYS_LED, 1);
+        testYaw = yaw;
+        if (testYaw == 0.0f) testYaw = 1.0f;  //special case
+        testYaw += 180.0f;
+        AdjAngle(&testYaw); 
+        midway = false;
+        calRequired++;
+      }    
+    }      
+  }
 }
 
 void compassGyroBias(float* yaw)

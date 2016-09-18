@@ -1,9 +1,6 @@
 var map = L.map('map').setView([33.7674, -117.5008], 16);
-L.tileLayer('http://otile{s}.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.png', {
+L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 18,
-    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
-        'tiles Courtesy of <a href="http://www.mapquest.com/" target="_blank">MapQuest</a>',
-    subdomains: '1',//'1234',
 }).addTo(map);
 
 var cf = L.circle([33.7674, -117.5008], 1, {

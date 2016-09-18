@@ -1,6 +1,12 @@
 # New-GPS-Additions
 crazyflie 1.0/2.0
 
+Date 2016.09.18
+
+>>>>Branch dkgps-9 - This update and new commit contains the latest updates for the
+uBlox Max M8c Pico Breakout with Chip Antenna GPS receiver that is equivalent to the
+code update level of Branch gtgps-9 for the Titan-2 GlobalTop GNSS receiver.
+
 Date 2016.07.10
 
 >>>>Branch dkgps-7 - This commit contains the latest updates involving changes
